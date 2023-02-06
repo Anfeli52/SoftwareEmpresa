@@ -27,7 +27,7 @@ public class conectarBD {
             Class.forName("com.mysql.jdbc.Driver");
             conn = (Connection) DriverManager.getConnection(url, user, password);
             //mensaje de conexión
-            new rojerusan.RSNotifyShadowAnimated("!Hecho¡",
+            new rojerusan.RSNotifyShadowAnimated("¡Hecho!",
                                     "!Conexión éxitosa!", 
                                     3, 
                                     RSNotifyShadowAnimated.PositionNotify.TopRight, 
