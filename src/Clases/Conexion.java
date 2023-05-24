@@ -15,7 +15,7 @@ import rojerusan.RSNotifyShadowAnimated;
  * @author Administrador
  */
 public class Conexion {
-     private final String base = "yaxja";
+    private final String base = "yaxja";
     private final String user = "root";
     private final String password = "";
     private final String url = "jdbc:mysql://localhost:3306/" + base;

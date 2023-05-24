@@ -6,15 +6,26 @@ package Interfaces;
 
 import Clases.SqlRio;
 import Clases.variables;
+import comunicacionserial.ArduinoExcepcion;
+import comunicacionserial.ComunicacionSerial_Arduino;
+import java.awt.Component;
 import java.awt.Image;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
 import rojerusan.RSNotifyShadowAnimated;
 
 /**
@@ -26,17 +37,45 @@ public class registroRio extends javax.swing.JFrame {
     public static FileInputStream imagen;
     public int longitudBytes;
     public static String cuerpoRio;
-
+    
+    //Importar librerias para la conexión con Arduino
+    ComunicacionSerial_Arduino conArduino = new ComunicacionSerial_Arduino();
+    
     /**
      * Creates new form registroRio
      */
+    
+    SerialPortEventListener listen = new SerialPortEventListener() {
+        @Override
+        public void serialEvent(SerialPortEvent spe) {
+            try {
+                if(conArduino.isMessageAvailable()){
+                    nivelPh.setText(conArduino.printMessage());
+                }
+            } catch (SerialPortException ex) {
+                Logger.getLogger(registroRio.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ArduinoExcepcion ex) {
+                Logger.getLogger(registroRio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    };
+    
     public registroRio() {
         initComponents();
-        int numCodigo = (int) (Math.random()*99999+1);
-        String codigo = "R"+numCodigo;
+        errorBackground.setVisible(false);
+        int numCodigo = (int) (Math.random() * 9999 + 1);
+        String codigo = "R" + numCodigo;
         lbCodigo.setText(codigo);
         lbCamposVaciosError.setVisible(false);
-     
+        
+        
+        //Arduino
+        /*try {
+            conArduino.arduinoRXTX("COM4", 9600, listen);
+        } catch (ArduinoExcepcion ex) {
+            Logger.getLogger(registroRio.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        
     }
 
     /**
@@ -48,267 +87,242 @@ public class registroRio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         ctNombreRio = new javax.swing.JTextField();
-        lbFoto = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        lbCodigo = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        cbCuerpo = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
         ctNivelPH = new javax.swing.JTextField();
         ctTubidad = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        cbCuerpo = new javax.swing.JComboBox<>();
-        jLabel8 = new javax.swing.JLabel();
         btnEnviarRio = new javax.swing.JButton();
         btnCancelRio = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        nivelPh = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         lbCamposVaciosError = new javax.swing.JLabel();
-        ctFecha = new rojeru_san.componentes.RSDateChooser();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        lbCodigo = new javax.swing.JLabel();
+        errorBackground = new javax.swing.JPanel();
+        btnAgregarFoto = new javax.swing.JButton();
+        panelImagen = new javax.swing.JLabel();
+        cTNombreImagen = new javax.swing.JTextField();
+
+        jRadioButton1.setText("jRadioButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setText("Rios");
+        jPanel2.setBackground(new java.awt.Color(5, 50, 71));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lbFoto.setText("Foto");
+        jLabel8.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("DATOS DEL SENSOR");
+        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 30, -1, 20));
 
-        jLabel3.setText("Código:");
+        jLabel4.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Nombre");
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 110, -1, 19));
 
-        lbCodigo.setText("codigo...");
+        ctNombreRio.setBackground(new java.awt.Color(5, 50, 71));
+        ctNombreRio.setForeground(new java.awt.Color(255, 255, 255));
+        ctNombreRio.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(255, 255, 255)));
+        ctNombreRio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ctNombreRioActionPerformed(evt);
+            }
+        });
+        jPanel2.add(ctNombreRio, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 140, 280, -1));
 
+        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Cuerpo de Agua");
+        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 170, 140, 20));
+
+        cbCuerpo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione...", "Rio", "Lago", "Oceano", "Mar" }));
+        cbCuerpo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbCuerpoActionPerformed(evt);
+            }
+        });
+        jPanel2.add(cbCuerpo, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 200, 280, 20));
+
+        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Nivel de PH");
+        jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 240, -1, -1));
+
+        ctNivelPH.setBackground(new java.awt.Color(5, 50, 71));
+        ctNivelPH.setForeground(new java.awt.Color(255, 255, 255));
         ctNivelPH.setText("0");
+        ctNivelPH.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(255, 255, 255)));
         ctNivelPH.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ctNivelPHActionPerformed(evt);
             }
         });
+        jPanel2.add(ctNivelPH, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 270, 280, -1));
 
+        ctTubidad.setBackground(new java.awt.Color(5, 50, 71));
+        ctTubidad.setForeground(new java.awt.Color(255, 255, 255));
         ctTubidad.setText("0");
+        ctTubidad.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(255, 255, 255)));
+        ctTubidad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ctTubidadActionPerformed(evt);
+            }
+        });
+        jPanel2.add(ctTubidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 340, 270, -1));
 
-        jLabel4.setText("Nombre:");
-
-        jLabel5.setText("Cuerpo de Agua");
-
-        jLabel6.setText("Nivel de PH");
-
+        jLabel7.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Turbidad");
+        jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 310, 80, 19));
 
-        cbCuerpo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione...", "Rio", "Lago", "Oceano", "Mar" }));
-
-        jLabel8.setText("DATOS DEL SENSOR");
-
+        btnEnviarRio.setBackground(new java.awt.Color(0, 102, 102));
+        btnEnviarRio.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnEnviarRio.setForeground(new java.awt.Color(255, 255, 255));
         btnEnviarRio.setText("Registrar");
+        btnEnviarRio.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnEnviarRio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEnviarRioActionPerformed(evt);
             }
         });
+        jPanel2.add(btnEnviarRio, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 410, -1, -1));
 
+        btnCancelRio.setBackground(new java.awt.Color(0, 102, 102));
+        btnCancelRio.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnCancelRio.setForeground(new java.awt.Color(255, 255, 255));
         btnCancelRio.setText("Cancelar");
-
-        jButton3.setText("Subir Foto");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnCancelRio.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCancelRio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnCancelRioActionPerformed(evt);
             }
         });
+        jPanel2.add(btnCancelRio, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 410, -1, -1));
 
+        nivelPh.setText("Nivel PH");
+        jPanel2.add(nivelPh, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 70, -1));
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 0, 450, 470));
+
+        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbCamposVaciosError.setBackground(new java.awt.Color(102, 0, 0));
+        lbCamposVaciosError.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbCamposVaciosError.setForeground(new java.awt.Color(255, 255, 255));
+        lbCamposVaciosError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbCamposVaciosError.setText("¡¡CAMPOS VACIOS!!");
+        lbCamposVaciosError.setToolTipText("");
+        jPanel1.add(lbCamposVaciosError, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 360, 350, 20));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "Código Agua", "Nombre Agua", "Cuerpo Agua", "Nivel de PH", "Nivel de Turbidad", "Fecha Muestra"
+        jLabel3.setBackground(new java.awt.Color(0, 0, 0));
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel3.setText("Código:");
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 410, -1, -1));
+
+        lbCodigo.setBackground(new java.awt.Color(0, 0, 0));
+        lbCodigo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbCodigo.setForeground(new java.awt.Color(0, 0, 0));
+        lbCodigo.setText("Código Dato");
+        lbCodigo.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                lbCodigoAncestorAdded(evt);
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        jPanel1.add(lbCodigo, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 410, 200, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(lbCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lbFoto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(202, 202, 202)
-                                .addComponent(jLabel8)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(jLabel5)
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jLabel1)
-                                                .addComponent(jLabel4))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(lbCamposVaciosError)
-                                                .addGap(19, 19, 19)))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(cbCuerpo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(ctNombreRio, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(ctTubidad, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(jLabel6)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(ctNivelPH, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(54, 54, 54)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(99, 99, 99))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(ctFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnCancelRio)
-                            .addComponent(btnEnviarRio))
-                        .addGap(606, 606, 606))))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(68, 68, 68)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(127, 127, 127)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lbFoto, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(lbCodigo)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lbCamposVaciosError)
-                        .addGap(24, 24, 24)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(ctNombreRio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel5)
-                                    .addComponent(cbCuerpo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(23, 23, 23)
-                                .addComponent(jLabel8)
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(ctNivelPH, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel6))
-                                .addGap(4, 4, 4)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(ctTubidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(ctFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnEnviarRio)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnCancelRio)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        errorBackground.setBackground(new java.awt.Color(102, 0, 0));
+        jPanel1.add(errorBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 360, 350, 20));
+
+        btnAgregarFoto.setBackground(new java.awt.Color(0, 153, 204));
+        btnAgregarFoto.setFont(new java.awt.Font("Monospaced", 1, 12)); // NOI18N
+        btnAgregarFoto.setText("📁Agregar Foto");
+        btnAgregarFoto.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAgregarFoto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarFotoActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnAgregarFoto, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 280, 180, -1));
+        jPanel1.add(panelImagen, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 60, 230, 180));
+
+        cTNombreImagen.setText("Nombre Imagen");
+        cTNombreImagen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cTNombreImagenActionPerformed(evt);
+            }
+        });
+        jPanel1.add(cTNombreImagen, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 320, 180, -1));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 350, 470));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-         JFileChooser se = new JFileChooser();
-        FileNameExtensionFilter extension = new FileNameExtensionFilter("JPG, PNG, GIF","jpg","png","gif");
-        se.setFileFilter(extension);
-        int estado = se.showOpenDialog(this);
-        System.out.print(estado);
-        if(estado == JFileChooser.APPROVE_OPTION)
-        {
-            try {
-
-                imagen =  new FileInputStream(se.getSelectedFile());
-                longitudBytes = (int)se.getSelectedFile().length();
-
-                Image icono = ImageIO.read(se.getSelectedFile()).getScaledInstance(lbFoto.getWidth(), lbFoto.getHeight(), Image.SCALE_DEFAULT);
-                lbFoto.setIcon(new ImageIcon(icono));
-                lbFoto.updateUI();
-
-               
-                
-
-            } catch (FileNotFoundException ex) {ex.printStackTrace();}
-            catch (IOException ex){ex.printStackTrace();}
-        }
-        
-    }//GEN-LAST:event_jButton3ActionPerformed
-
     private void btnEnviarRioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarRioActionPerformed
         // TODO add your handling code here:
-      
+        
         String nombre = ctNombreRio.getText();
-         cuerpoRio = (String)cbCuerpo.getSelectedItem();
+        cuerpoRio = (String) cbCuerpo.getSelectedItem();
         double nivelPH = Double.parseDouble(ctNivelPH.getText());
         double turbidad = Double.parseDouble(ctTubidad.getText());
-        JOptionPane.showMessageDialog(this, nombre+
-            "\n"+cuerpoRio+
-            "\n"+nivelPH+
-            "\n"+turbidad);
-        if((nombre.equals("")||nombre.equals(null))||cuerpoRio.equals("Seleccione...")){
+        
+        
+        if ((nombre.equals("") || nombre.equals(null)) || cuerpoRio.equals("Seleccione...")) {
             lbCamposVaciosError.setVisible(true);
-        }else{
+            errorBackground.setVisible(true);
+
+        } else {
             lbCamposVaciosError.setVisible(false);
-            
+            errorBackground.setVisible(false);
+
+
             variables llamado = new variables();
-            JOptionPane.showMessageDialog(this, llamado.getCorreo());
             int opcion = SqlRio.guardar(llamado.getCorreo());
-            if(opcion > 0){
-                
+            if (opcion > 0) {
+
                 new rojerusan.RSNotifyShadowAnimated("!Hecho¡",
-                                    "!Registro éxitoso!", 
-                                    3, 
-                                    RSNotifyShadowAnimated.PositionNotify.TopRight, 
-                                    RSNotifyShadowAnimated.AnimationNotify.UpBottom, 
-                                    RSNotifyShadowAnimated.TypeNotify.SUCCESS).setVisible(true);
-                
-               
+                        "!Registro éxitoso!",
+                        3,
+                        RSNotifyShadowAnimated.PositionNotify.TopRight,
+                        RSNotifyShadowAnimated.AnimationNotify.UpBottom,
+                        RSNotifyShadowAnimated.TypeNotify.SUCCESS).setVisible(true);
+                        
+            int numCodigo = (int) (Math.random() * 9999 + 1);
+            String codigo = "R" + numCodigo;
+            lbCodigo.setText(codigo);
+            lbCamposVaciosError.setVisible(false);
                 //limpiarCampos();
             } else {
-                 new rojerusan.RSNotifyShadowAnimated("!Intente de nuevo¡",
-                                    "!Problemas  al guardar el registro!", 
-                                    3, 
-                                    RSNotifyShadowAnimated.PositionNotify.TopRight, 
-                                    RSNotifyShadowAnimated.AnimationNotify.UpBottom, 
-                                    RSNotifyShadowAnimated.TypeNotify.WARNING).setVisible(true);
-               
+                new rojerusan.RSNotifyShadowAnimated("!Intente de nuevo¡",
+                        "!Problemas  al guardar el registro!",
+                        3,
+                        RSNotifyShadowAnimated.PositionNotify.TopRight,
+                        RSNotifyShadowAnimated.AnimationNotify.UpBottom,
+                        RSNotifyShadowAnimated.TypeNotify.WARNING).setVisible(true);
+
                 //limpiarCampos();
             }
+            LimpiarCampos();
         }
         
     }//GEN-LAST:event_btnEnviarRioActionPerformed
@@ -317,6 +331,79 @@ public class registroRio extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_ctNivelPHActionPerformed
 
+    private void lbCodigoAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_lbCodigoAncestorAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lbCodigoAncestorAdded
+    
+    private void btnCancelRioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelRioActionPerformed
+        LimpiarCampos();
+    }//GEN-LAST:event_btnCancelRioActionPerformed
+
+    private void ctTubidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ctTubidadActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ctTubidadActionPerformed
+
+    private void ctNombreRioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ctNombreRioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ctNombreRioActionPerformed
+
+    private void btnAgregarFotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarFotoActionPerformed
+        JFileChooser se = new JFileChooser();
+        FileNameExtensionFilter extension = new FileNameExtensionFilter("JPG, PNG, JPEG & GIF","jpg","png","gif", "jpeg");
+        se.setFileFilter(extension);
+        int estado = se.showOpenDialog(this);
+        System.out.print(estado);
+        /*if(estado == JFileChooser.APPROVE_OPTION)
+        {
+            try {
+                imagen =  new FileInputStream(se.getSelectedFile());
+                longitudBytes = (int)se.getSelectedFile().length();
+
+                Image icono = ImageIO.read(se.getSelectedFile()).getScaledInstance(panelImagen.getWidth(), panelImagen.getHeight(), Image.SCALE_DEFAULT);
+                panelImagen.setIcon(new ImageIcon(icono));
+                panelImagen.updateUI();
+                
+            } catch (FileNotFoundException ex) {ex.printStackTrace();}
+            catch (IOException ex){ex.printStackTrace();}
+        }*/
+        
+        if(estado == JFileChooser.APPROVE_OPTION){
+            
+            File file = se.getSelectedFile();
+            cTNombreImagen.setText(String.valueOf(file));
+            
+            try {
+                imagen =  new FileInputStream(file);
+                longitudBytes = (int)se.getSelectedFile().length();
+
+                Image icono = ImageIO.read(se.getSelectedFile()).getScaledInstance(panelImagen.getWidth(), panelImagen.getHeight(), Image.SCALE_DEFAULT);
+                panelImagen.setIcon(new ImageIcon(icono));
+                panelImagen.updateUI();
+                
+            } catch (FileNotFoundException ex) {ex.printStackTrace();}
+            catch (IOException ex){ex.printStackTrace();}
+        }
+    }//GEN-LAST:event_btnAgregarFotoActionPerformed
+
+    private void cbCuerpoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbCuerpoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbCuerpoActionPerformed
+
+    private void cTNombreImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cTNombreImagenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cTNombreImagenActionPerformed
+
+    private void LimpiarCampos(){
+        for (Component component: jPanel2.getComponents()){
+            if(component instanceof JTextField){
+                ((JTextField) component).setText("");
+            }
+            if(component instanceof JComboBox){
+                ((JComboBox) component).setSelectedIndex(0);
+            }
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -353,25 +440,27 @@ public class registroRio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAgregarFoto;
     private javax.swing.JButton btnCancelRio;
     private javax.swing.JButton btnEnviarRio;
+    public static javax.swing.JTextField cTNombreImagen;
     public static javax.swing.JComboBox<String> cbCuerpo;
-    public static rojeru_san.componentes.RSDateChooser ctFecha;
     public static javax.swing.JTextField ctNivelPH;
     public static javax.swing.JTextField ctNombreRio;
     public static javax.swing.JTextField ctTubidad;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel errorBackground;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JLabel lbCamposVaciosError;
     public static javax.swing.JLabel lbCodigo;
-    public static javax.swing.JLabel lbFoto;
+    private javax.swing.JLabel nivelPh;
+    private javax.swing.JLabel panelImagen;
     // End of variables declaration//GEN-END:variables
 }
