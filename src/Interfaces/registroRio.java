@@ -45,7 +45,7 @@ public class registroRio extends javax.swing.JFrame {
      * Creates new form registroRio
      */
     
-    SerialPortEventListener listen = new SerialPortEventListener() {
+    /*SerialPortEventListener listen = new SerialPortEventListener() {
         @Override
         public void serialEvent(SerialPortEvent spe) {
             try {
@@ -58,7 +58,7 @@ public class registroRio extends javax.swing.JFrame {
                 Logger.getLogger(registroRio.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    };
+    };*/
     
     public registroRio() {
         initComponents();
